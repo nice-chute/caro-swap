@@ -53,7 +53,5 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^17.0.13",
-    "fsevents": "^2.3.2"
-  }
+    "@types/node": "^17.0.13"  }
 }
