@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Connection, PublicKey, Keypair, clusterApiUrl, LAMPORTS_PER_SOL, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, NATIVE_MINT } from "@solana/spl-token";
 import {
@@ -11,6 +11,10 @@ import * as anchor from "@project-serum/anchor";
 import { getPhantomWallet } from '@solana/wallet-adapter-wallets';
 import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+
+import { programs } from '@metaplex/js';
+// import fetch from 'node-fetch';
+
 
 // Bootstrap components
 import Container from 'react-bootstrap/Container';
@@ -31,11 +35,15 @@ import { token } from '@project-serum/anchor/dist/cjs/utils';
 import { InputGroup } from 'react-bootstrap';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
+// http
+const { metadata: { Metadata } } = programs;
+
+
 // Globals
 const market = new PublicKey("EQkCga3Rtkt4AFhJToY6jsstGzRHkDp6asgLxu6srkJc");
-
 const wallets = [getPhantomWallet()]
-const network = clusterApiUrl('devnet');
+//const network = clusterApiUrl('devnet');
+const network = "https://ssc-dao.genesysgo.net/"
 const opts = {
   preflightCommitment: "processed"
 }
@@ -43,11 +51,10 @@ const programID = new PublicKey(idl.metadata.address);
 const { SystemProgram } = web3;
 
 function App() {
-  // User token accounts
-  const [profile, setProfile] = useState({});
-  // Listings on swap
+  // Wallet NFTs
+  const [walletNfts, setWalletNfts] = useState([]);
+  // Listings on market
   const [listings, setListings] = useState([]);
-
   // Wallet connected
   const wallet = useWallet()
   // Connection to Solana rpc
@@ -58,8 +65,7 @@ function App() {
     );
     return provider;
   }
-
-  // Run on initial render
+  // App render
   useEffect(() => {
     (async () => {
       if (
@@ -68,19 +74,18 @@ function App() {
       ) {
         return;
       }
-      // user profile
-      const publicKey = wallet.publicKey;
-      let profile = await getProfile(publicKey);
-      setProfile(profile);
-      let listings = await getListings();
-      setListings(listings)
+      console.log('running')
+      // Wallet NFTs
+      fetchWalletNFTs().catch(console.error);
+      // Listings
+      fetchListings().catch(console.error);
     })();
-  }, [wallet]);
+  }, [wallet, fetchWalletNFTs, fetchListings]);
 
-  // Get token accounts for wallet connected
-  async function getProfile(pubkey) {
+  // Fetch wallet's nfts
+  const fetchWalletNFTs = useCallback(async () => {
     const provider = await getProvider();
-    let tokenAccounts = await provider.connection.getParsedTokenAccountsByOwner(pubkey, { programId: TOKEN_PROGRAM_ID });
+    let tokenAccounts = await provider.connection.getParsedTokenAccountsByOwner(provider.wallet.publicKey, { programId: TOKEN_PROGRAM_ID });
     let token_accs = []
     let nft_token_accs = []
     for (let i = 0; i < tokenAccounts.value.length; i++) {
@@ -93,13 +98,29 @@ function App() {
         nft_token_accs.push(tokenAccounts.value[i]);
       }
     }
-    return { "pubkey": pubkey, "tokenAccounts": token_accs, "nftTokenAccounts": nft_token_accs }
-  }
+    let nft_schemas = []
+    for (let i = 0; i < nft_token_accs.length; i++) {
+      try {
+        let tokenAccountMint = new PublicKey(nft_token_accs[i].account.data.parsed.info.mint);
+        //I'm searching for this: C79iLmxdRoyVfKcaKU7YBppECTtqhSH8erXYPzxxhsH8
+        const pda = await Metadata.getPDA(tokenAccountMint);
+        const metadata = await Metadata.load(provider.connection, pda);
+        let name = metadata.data.data.name
+        let uri = metadata.data.data.uri
+        // http metaplex
+        // const response = await fetch(uri);
+        // const data = await response.json();
+        // console.log(data)
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    setWalletNfts(nft_schemas)
+  });
 
-  async function getListings() {
+  const fetchListings = useCallback(async () => {
     const provider = await getProvider();
     const program = new Program(idl, programID, provider);
-
     let listings = []
     let user_listings = []
     let accounts = await provider.connection.getProgramAccounts(program.programId);
@@ -115,14 +136,13 @@ function App() {
       catch (err) {
       }
     }
-    return { 'activeListings': listings, 'userListings': user_listings }
-  }
+    console.log("active listings:", listings)
+    setListings({ 'activeListings': listings, 'userListings': user_listings });
+  });
 
   function NFTCard({ props }) {
     // Listing price
     const [listingPrice, setListingPrice] = useState("");
-    console.log("props", props)
-
     async function handleClick() {
       try {
         let price = new anchor.BN(listingPrice * LAMPORTS_PER_SOL)
@@ -220,7 +240,6 @@ function App() {
         // Program
         const provider = await getProvider();
         const program = new Program(idl, programID, provider);
-        console.log(props)
         // Mint + market
         let nftMint = new PublicKey(props.nftMint);
         let market = new PublicKey(props.market)
@@ -304,12 +323,9 @@ function App() {
   }
 
   function UserListingCard({ props }) {
-    console.log("props:", props)
     const [listingPrice, setListingPrice] = useState("");
 
     async function handleClose() {
-      console.log("close")
-      console.log(props)
       try {
         // Program
         const provider = await getProvider();
@@ -437,7 +453,7 @@ function App() {
   }
 
   function ActiveListings({ props }) {
-    console.log(props)
+    console.log("props", props)
     if (props.length === 0) {
       return (
         <Spinner animation="border" role="status">
@@ -508,7 +524,7 @@ function App() {
     }
   }
 
-  function Buy() {
+  function Home() {
     return (
       <>
         <ActiveListings props={listings} />
@@ -527,7 +543,7 @@ function App() {
   function Wallet() {
     return (
       <>
-        <UserNFTs props={profile} />
+        <UserNFTs props={walletNfts} />
       </>
     );
   }
@@ -559,7 +575,6 @@ function App() {
               />{' '}
             </Navbar.Brand>
             <Nav className="nav-middle">
-              <Nav.Link href="/">Buy</Nav.Link>
               <Nav.Link href="/listings">My Listings</Nav.Link>
               <Nav.Link href="/wallet">Wallet</Nav.Link>
             </Nav>
@@ -576,7 +591,7 @@ function App() {
           </Container>
         </Navbar >
         <Routes>
-          <Route path="/" element={<Buy />} />
+          <Route path="/" element={<Home />} />
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/listings" element={<Listings />} />
         </Routes>
