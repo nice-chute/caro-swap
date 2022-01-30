@@ -6,4 +6,3 @@ target
 node_modules
 public
 test-ledger
-scripts/
