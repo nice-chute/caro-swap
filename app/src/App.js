@@ -25,8 +25,6 @@ import Spinner from 'react-bootstrap/Spinner'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 
-
-
 // CSS
 import './App.css';
 import { token } from '@project-serum/anchor/dist/cjs/utils';
