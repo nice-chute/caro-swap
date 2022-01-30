@@ -6,6 +6,8 @@
 .pnp.js
 test-ledger
 
+init
+
 # testing
 /coverage
 

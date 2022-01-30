@@ -13,8 +13,6 @@ import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-ad
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 import { programs } from '@metaplex/js';
-// import fetch from 'node-fetch';
-
 
 // Bootstrap components
 import Container from 'react-bootstrap/Container';
@@ -23,24 +21,21 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import ListGroup from 'react-bootstrap/ListGroup'
-import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
+// https
+import axios from 'axios';
 
 // CSS
 import './App.css';
-import { token } from '@project-serum/anchor/dist/cjs/utils';
-import { InputGroup } from 'react-bootstrap';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 // http
 const { metadata: { Metadata } } = programs;
 
-
 // Globals
-const market = new PublicKey("EQkCga3Rtkt4AFhJToY6jsstGzRHkDp6asgLxu6srkJc");
+const market = new PublicKey("33Tz73Cng8inaqTxGhv2HT2bZkip2axJJSEsa9B21ZR7");
 const wallets = [getPhantomWallet()]
 //const network = clusterApiUrl('devnet');
 const network = "https://ssc-dao.genesysgo.net/"
@@ -74,48 +69,43 @@ function App() {
       ) {
         return;
       }
-      console.log('running')
-      // Wallet NFTs
-      fetchWalletNFTs().catch(console.error);
       // Listings
       fetchListings().catch(console.error);
+      // Wallet NFTs
+      fetchWalletNfts().catch(console.error);
     })();
-  }, [wallet, fetchWalletNFTs, fetchListings]);
+  }, [wallet]);
 
   // Fetch wallet's nfts
-  const fetchWalletNFTs = useCallback(async () => {
+  const fetchWalletNfts = useCallback(async () => {
     const provider = await getProvider();
+    // // TODO: This is slow
     let tokenAccounts = await provider.connection.getParsedTokenAccountsByOwner(provider.wallet.publicKey, { programId: TOKEN_PROGRAM_ID });
-    let token_accs = []
-    let nft_token_accs = []
+    let wallet_nfts = []
     for (let i = 0; i < tokenAccounts.value.length; i++) {
-      token_accs.push(tokenAccounts.value[i])
+      let pubkey = tokenAccounts.value[i].pubkey
       let tokenAccountMint = new PublicKey(tokenAccounts.value[i].account.data.parsed.info.mint);
       let mintInfo = await provider.connection.getParsedAccountInfo(tokenAccountMint)
       let tokenBalance = parseInt(tokenAccounts.value[i].account.data.parsed.info.tokenAmount.amount);
       let mintSupply = parseInt(mintInfo.value.data.parsed.info.supply);
-      if (mintSupply === 1 && tokenBalance == 1) {
-        nft_token_accs.push(tokenAccounts.value[i]);
+      // NFT
+      if (mintSupply === 1 && tokenBalance === 1) {
+        // Metaplex data
+        try {
+          const pda = await Metadata.getPDA(tokenAccountMint);
+          const metadata = await Metadata.load(provider.connection, pda);
+          let uri = metadata.data.data.uri
+          const { data } = await axios.get(uri);
+          // Todo: handle non metaplex nfts
+          wallet_nfts.push({ "pubkey": pubkey, "mint": tokenAccountMint, "data": data })
+        }
+        catch (err) {
+          console.log(err)
+        }
       }
     }
-    let nft_schemas = []
-    for (let i = 0; i < nft_token_accs.length; i++) {
-      try {
-        let tokenAccountMint = new PublicKey(nft_token_accs[i].account.data.parsed.info.mint);
-        //I'm searching for this: C79iLmxdRoyVfKcaKU7YBppECTtqhSH8erXYPzxxhsH8
-        const pda = await Metadata.getPDA(tokenAccountMint);
-        const metadata = await Metadata.load(provider.connection, pda);
-        let name = metadata.data.data.name
-        let uri = metadata.data.data.uri
-        // http metaplex
-        // const response = await fetch(uri);
-        // const data = await response.json();
-        // console.log(data)
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    setWalletNfts(nft_schemas)
+    setWalletNfts(wallet_nfts)
+
   });
 
   const fetchListings = useCallback(async () => {
@@ -128,15 +118,26 @@ function App() {
       // Try to fetch the listing account, throws error if its not a listing
       try {
         let listing = await program.account.listing.fetch(accounts[i].pubkey);
-        listings.push(listing)
-        if (listing.seller.equals(provider.wallet.publicKey)) {
-          user_listings.push(listing)
+        // Metaplex data
+        try {
+          const pda = await Metadata.getPDA(listing.nftMint);
+          const metadata = await Metadata.load(provider.connection, pda);
+          let uri = metadata.data.data.uri
+          const { data } = await axios.get(uri);
+          // Todo: handle non metaplex nfts
+          listings.push({ "listing": listing, "metadata": data })
+          // user listing
+          if (listing.seller.equals(provider.wallet.publicKey)) {
+            user_listings.push({ "listing": listing, "metadata": data })
+          }
+        }
+        catch (err) {
+          console.log(err)
         }
       }
       catch (err) {
       }
     }
-    console.log("active listings:", listings)
     setListings({ 'activeListings': listings, 'userListings': user_listings });
   });
 
@@ -152,8 +153,7 @@ function App() {
 
         // Nft account info for the card
         let nftAccount = props.pubkey;
-        let data = props.account.data.parsed.info;
-        let nftMint = new PublicKey(data.mint);
+        let nftMint = props.mint;
         // Listing PDA
         let [listing, listingBump] = await PublicKey.findProgramAddress(
           [
@@ -172,12 +172,6 @@ function App() {
           ],
           program.programId
         );
-        // Logging
-        console.log("program id:", program.programId.toBase58())
-        console.log("nft vault:", nftVault.toBase58())
-        console.log("mint:", nftMint.toBase58())
-        console.log("pubkey:", nftAccount.toBase58())
-        console.log("listing:", listing.toBase58())
         // Create listing
         const tx = await program.rpc.createListing(
           price,
@@ -215,7 +209,7 @@ function App() {
       return (
         <Card className="card">
           <Container>
-            <Card.Img className="nft" src="https://cdn.solanamonkey.business/gen2/2986.png" />
+            <Card.Img className="nft" src={props.data.image} />
           </Container>
           <Card.Body className="card-body justify-content-center">
             <div className="input-group mb-3">
@@ -310,10 +304,10 @@ function App() {
             height="15"
             className="d-inline-block"
           />{' '}
-          {props.ask.toNumber() / LAMPORTS_PER_SOL}
+          {props.listing.ask.toNumber() / LAMPORTS_PER_SOL}
         </div>
         <Container>
-          <Card.Img className="nft" src="https://www.arweave.net/N_gPjI27LW-5z-HAVOCYPUOl6viCN_mOA7MxESKDDwU?ext=png" />
+          <Card.Img className="nft" src={props.metadata.image} />
         </Container>
         <Card.Body className="card-body justify-content-center">
           <Button className="submit-btn" onClick={() => handleClick()}>Buy</Button>
@@ -324,7 +318,7 @@ function App() {
 
   function UserListingCard({ props }) {
     const [listingPrice, setListingPrice] = useState("");
-
+    // close listing
     async function handleClose() {
       try {
         // Program
@@ -334,8 +328,8 @@ function App() {
         let sellerNFTAcc = Keypair.generate();
 
         // Mint + market
-        let nftMint = new PublicKey(props.nftMint);
-        let market = new PublicKey(props.market)
+        let nftMint = new PublicKey(props.listing.nftMint);
+        let market = new PublicKey(props.listing.market)
         // Listing PDA
         let [listing, listingBump] = await PublicKey.findProgramAddress(
           [
@@ -387,8 +381,8 @@ function App() {
         const program = new Program(idl, programID, provider);
 
         // Mint + market
-        let nftMint = new PublicKey(props.nftMint);
-        let market = new PublicKey(props.market)
+        let nftMint = new PublicKey(props.listing.nftMint);
+        let market = new PublicKey(props.listing.market)
         // Listing PDA
         let [listing, listingBump] = await PublicKey.findProgramAddress(
           [
@@ -431,10 +425,10 @@ function App() {
             height="15"
             className="d-inline-block"
           />{' '}
-          {props.ask.toNumber() / LAMPORTS_PER_SOL}
+          {props.listing.ask.toNumber() / LAMPORTS_PER_SOL}
         </div>
         <Container>
-          <Card.Img className="nft" src="https://cdn.solanamonkey.business/gen2/2986.png" />
+          <Card.Img className="nft" src={props.metadata.image} />
         </Container>
         <Card.Body className="card-body justify-content-center">
           <div className="input-group mb-3">
@@ -453,7 +447,6 @@ function App() {
   }
 
   function ActiveListings({ props }) {
-    console.log("props", props)
     if (props.length === 0) {
       return (
         <Spinner animation="border" role="status">
@@ -477,7 +470,6 @@ function App() {
   }
 
   function UserListings({ props }) {
-    console.log(props)
     if (props.length === 0) {
       return (
         <Spinner animation="border" role="status">
@@ -501,7 +493,7 @@ function App() {
   }
 
   function UserNFTs({ props }) {
-    if (Object.keys(props).length === 0 && props.constructor === Object) {
+    if (Object.keys(walletNfts).length === 0) {
       return (
         <Spinner animation="border" role="status">
           <span className="visually-hidden">Loading...</span>
@@ -509,11 +501,10 @@ function App() {
       )
     }
     else {
-      let tokenAccounts = props.nftTokenAccounts;
       return (
         <Container className="card-container">
           <Row xs={"auto"} md={"auto"} className="row">
-            {tokenAccounts.map((acc, idx) => (
+            {props.map((acc, idx) => (
               <Col className="col top-buffer" key={idx}>
                 <NFTCard props={acc} />
               </Col>

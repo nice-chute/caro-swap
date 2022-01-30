@@ -101,6 +101,7 @@
   margin-right:0!important;
   margin-left:0!important;
   max-width: none!important;
+  margin-bottom:60px;
 }
 
 .submit-btn {
@@ -143,6 +144,7 @@
 }
 .nft {
   object-fit: contain;
+  max-height:320px;
 }
 
 .card.button {
