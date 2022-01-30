@@ -1,0 +1,429 @@
+{
+    "version": "0.1.0",
+    "name": "fortune",
+    "instructions": [
+        {
+            "name": "createMarket",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "market",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "marketVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nativeMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "listingFee",
+                    "type": "u64"
+                },
+                {
+                    "name": "marketVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "createListing",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "listing",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "market",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftAccount",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "ask",
+                    "type": "u64"
+                },
+                {
+                    "name": "listingBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "nftVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "buy",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "signerNftAcc",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "listing",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "seller",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "market",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "marketVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "nativeMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "listingBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "marketVaultBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "nftVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "ask",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "listing",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "market",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "amount",
+                    "type": "u64"
+                },
+                {
+                    "name": "listingBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "closeListing",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "signerNftAcc",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "nftVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "listing",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "market",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "listingBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "nftVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "withdrawFees",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "targetWsolAcc",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "market",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "marketVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nativeMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "amount",
+                    "type": "u64"
+                },
+                {
+                    "name": "marketVaultBump",
+                    "type": "u8"
+                }
+            ]
+        }
+    ],
+    "accounts": [
+        {
+            "name": "Market",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "authority",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "lamportVault",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "listingFee",
+                        "type": "u64"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Listing",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "market",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "seller",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "nftMint",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "ask",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "lock",
+                        "type": "bool"
+                    }
+                ]
+            }
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "BidTooLow",
+            "msg": "Bid is too low"
+        },
+        {
+            "code": 6001,
+            "name": "InvalidAskAuth",
+            "msg": "Only seller can change ask"
+        },
+        {
+            "code": 6002,
+            "name": "LockedListing",
+            "msg": "Locked listing"
+        },
+        {
+            "code": 6003,
+            "name": "ZeroAsk",
+            "msg": "Ask cannot be less than zero"
+        }
+    ],
+    "metadata": {
+        "address": "rTxHpHTgJ6ZeWgjAX9eEpS92Ei6SxD86rh1u55H6pWv"
+    }
+}
