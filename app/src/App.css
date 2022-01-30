@@ -107,7 +107,6 @@
 .submit-btn {
   width: 75%;
   background-color:rgb(255,215,0)!important;
-  border-radius: 50%;
   border:2px rgb(255,215,0) solid!important;
   animation: animate 2s linear infinite;
   font-size: 15px !important;
