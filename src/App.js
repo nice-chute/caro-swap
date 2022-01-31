@@ -228,24 +228,27 @@ function App() {
   function ListingCard({ props }) {
     // Buy nft
     async function handleClick() {
+      console.log(props)
       try {
         // Program
         const provider = await getProvider();
         const program = new Program(idl, programID, provider);
         // Mint + market
-        let nftMint = new PublicKey(props.nftMint);
-        let market = new PublicKey(props.market)
+        let nftMint = props.listing.nftMint;
+        let market = props.listing.market;
+        let seller = props.listing.seller;
         let buyerNFTAcc = Keypair.generate();
         // Listing PDA
         let [listing, listingBump] = await PublicKey.findProgramAddress(
           [
             Buffer.from(anchor.utils.bytes.utf8.encode("listing")),
             market.toBuffer(),
-            props.nftMint.toBuffer(),
-            props.seller.toBuffer(),
+            nftMint.toBuffer(),
+            props.listing.seller.toBuffer(),
           ],
           program.programId
         );
+        console.log(listing)
         // Market vault PDA
         let [marketVault, marketVaultBump] = await PublicKey.findProgramAddress(
           [
@@ -255,6 +258,7 @@ function App() {
           ],
           program.programId
         );
+        console.log(marketVault)
         // NFT vault PDA
         let [nftVault, nftVaultBump] = await PublicKey.findProgramAddress(
           [
@@ -263,6 +267,7 @@ function App() {
           ],
           program.programId
         );
+        console.log(nftVault)
         // Buy nft
         const tx = await program.rpc.buy(
           listingBump,
@@ -273,7 +278,7 @@ function App() {
               signer: provider.wallet.publicKey,
               signerNftAcc: buyerNFTAcc.publicKey,
               listing: listing,
-              seller: props.seller,
+              seller: seller,
               market: market,
               marketVault: marketVault,
               nftVault: nftVault,
