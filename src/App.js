@@ -85,11 +85,9 @@ function App() {
     for (let i = 0; i < tokenAccounts.value.length; i++) {
       let pubkey = tokenAccounts.value[i].pubkey
       let tokenAccountMint = new PublicKey(tokenAccounts.value[i].account.data.parsed.info.mint);
-      let mintInfo = await provider.connection.getParsedAccountInfo(tokenAccountMint)
       let tokenBalance = parseInt(tokenAccounts.value[i].account.data.parsed.info.tokenAmount.amount);
-      let mintSupply = parseInt(mintInfo.value.data.parsed.info.supply);
       // NFT
-      if (mintSupply === 1 && tokenBalance === 1) {
+      if (tokenBalance === 1) {
         // Metaplex data
         try {
           const pda = await Metadata.getPDA(tokenAccountMint);
