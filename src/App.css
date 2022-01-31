@@ -108,7 +108,7 @@
   width: 75%;
   background-color:rgb(255,215,0)!important;
   border:2px rgb(255,215,0) solid!important;
-  animation: animate 2s linear infinite;
+  margin-top:15px!important;
   font-size: 15px !important;
   font-weight: bold!important;
 }

@@ -1,9 +1,9 @@
 {
     "version": "0.1.0",
-    "name": "fortune",
+    "name": "zzz",
     "instructions": [
         {
-            "name": "createMarket",
+            "name": "initialize",
             "accounts": [
                 {
                     "name": "signer",
@@ -11,13 +11,79 @@
                     "isSigner": true
                 },
                 {
-                    "name": "market",
+                    "name": "splVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "splMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "splVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "createPool",
+            "accounts": [
+                {
+                    "name": "signer",
                     "isMut": true,
                     "isSigner": true
                 },
                 {
-                    "name": "marketVault",
+                    "name": "nftAccount",
                     "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "probPool",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "ptokenMint",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "splVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "ptokenVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftMint",
+                    "isMut": false,
                     "isSigner": false
                 },
                 {
@@ -43,75 +109,31 @@
             ],
             "args": [
                 {
-                    "name": "listingFee",
+                    "name": "swapFee",
                     "type": "u64"
                 },
                 {
-                    "name": "marketVaultBump",
-                    "type": "u8"
-                }
-            ]
-        },
-        {
-            "name": "createListing",
-            "accounts": [
-                {
-                    "name": "signer",
-                    "isMut": true,
-                    "isSigner": true
-                },
-                {
-                    "name": "listing",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "market",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "nftVault",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "nftAccount",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "nftMint",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "systemProgram",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "tokenProgram",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "rent",
-                    "isMut": false,
-                    "isSigner": false
-                }
-            ],
-            "args": [
-                {
-                    "name": "ask",
+                    "name": "splAmount",
                     "type": "u64"
                 },
                 {
-                    "name": "listingBump",
+                    "name": "ptokenAmount",
+                    "type": "u64"
+                },
+                {
+                    "name": "splVaultBump",
                     "type": "u8"
                 },
                 {
                     "name": "nftVaultBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "ptokenVaultBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "ptokenMintBump",
                     "type": "u8"
                 }
             ]
@@ -125,32 +147,370 @@
                     "isSigner": true
                 },
                 {
-                    "name": "signerNftAcc",
+                    "name": "splVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "ptokenVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "probPool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "carolineVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "userPtokenVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "ptokenMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "nativeMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "ptokenAmount",
+                    "type": "u64"
+                },
+                {
+                    "name": "carolineVaultBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "userPtokenVaultBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "ptokenMintBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "ptokenVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "requestBurn",
+            "accounts": [
+                {
+                    "name": "signer",
                     "isMut": true,
                     "isSigner": true
                 },
                 {
-                    "name": "listing",
+                    "name": "userPtokenVault",
                     "isMut": true,
                     "isSigner": false
                 },
                 {
-                    "name": "seller",
+                    "name": "userBurn",
                     "isMut": true,
                     "isSigner": false
                 },
                 {
-                    "name": "market",
+                    "name": "probPool",
                     "isMut": true,
                     "isSigner": false
                 },
                 {
-                    "name": "marketVault",
+                    "name": "ptokenMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "ptokenAmount",
+                    "type": "u64"
+                },
+                {
+                    "name": "userBurnBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "ptokenMintBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "userPtokenVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "userWithdraw",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "userPtokenVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "userPtokenAccount",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "probPool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "ptokenMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "ptokenAmount",
+                    "type": "u64"
+                },
+                {
+                    "name": "ptokenMintBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "userPtokenVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "executeBurn",
+            "accounts": [
+                {
+                    "name": "carolineAuthority",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "user",
                     "isMut": true,
                     "isSigner": false
                 },
                 {
                     "name": "nftVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "userBurn",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "probPool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "ptokenMint",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "recentBlockhashes",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "ptokenAmount",
+                    "type": "u64"
+                },
+                {
+                    "name": "ptokenMintBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "userBurnBump",
+                    "type": "u8"
+                },
+                {
+                    "name": "nftVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "claimAsset",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "nftAccount",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "probPool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "nftVaultBump",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "closePool",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "splAccount",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "nftAccount",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "probPool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "ptokenMint",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "nftVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "splVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "ptokenVault",
                     "isMut": true,
                     "isSigner": false
                 },
@@ -182,170 +542,19 @@
             ],
             "args": [
                 {
-                    "name": "listingBump",
-                    "type": "u8"
-                },
-                {
-                    "name": "marketVaultBump",
+                    "name": "ptokenMintBump",
                     "type": "u8"
                 },
                 {
                     "name": "nftVaultBump",
                     "type": "u8"
-                }
-            ]
-        },
-        {
-            "name": "ask",
-            "accounts": [
-                {
-                    "name": "signer",
-                    "isMut": true,
-                    "isSigner": true
                 },
                 {
-                    "name": "listing",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "market",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "nftMint",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "systemProgram",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "tokenProgram",
-                    "isMut": false,
-                    "isSigner": false
-                }
-            ],
-            "args": [
-                {
-                    "name": "amount",
-                    "type": "u64"
-                },
-                {
-                    "name": "listingBump",
-                    "type": "u8"
-                }
-            ]
-        },
-        {
-            "name": "closeListing",
-            "accounts": [
-                {
-                    "name": "signer",
-                    "isMut": true,
-                    "isSigner": true
-                },
-                {
-                    "name": "signerNftAcc",
-                    "isMut": true,
-                    "isSigner": true
-                },
-                {
-                    "name": "nftVault",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "listing",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "market",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "nftMint",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "systemProgram",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "tokenProgram",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "rent",
-                    "isMut": false,
-                    "isSigner": false
-                }
-            ],
-            "args": [
-                {
-                    "name": "listingBump",
+                    "name": "splVaultBump",
                     "type": "u8"
                 },
                 {
-                    "name": "nftVaultBump",
-                    "type": "u8"
-                }
-            ]
-        },
-        {
-            "name": "withdrawFees",
-            "accounts": [
-                {
-                    "name": "signer",
-                    "isMut": true,
-                    "isSigner": true
-                },
-                {
-                    "name": "targetWsolAcc",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "market",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "marketVault",
-                    "isMut": true,
-                    "isSigner": false
-                },
-                {
-                    "name": "nativeMint",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "systemProgram",
-                    "isMut": false,
-                    "isSigner": false
-                },
-                {
-                    "name": "tokenProgram",
-                    "isMut": false,
-                    "isSigner": false
-                }
-            ],
-            "args": [
-                {
-                    "name": "amount",
-                    "type": "u64"
-                },
-                {
-                    "name": "marketVaultBump",
+                    "name": "ptokenVaultBump",
                     "type": "u8"
                 }
             ]
@@ -353,7 +562,7 @@
     ],
     "accounts": [
         {
-            "name": "Market",
+            "name": "ProbPool",
             "type": {
                 "kind": "struct",
                 "fields": [
@@ -362,27 +571,19 @@
                         "type": "publicKey"
                     },
                     {
-                        "name": "lamportVault",
+                        "name": "nftAuthority",
                         "type": "publicKey"
                     },
                     {
-                        "name": "listingFee",
-                        "type": "u64"
-                    }
-                ]
-            }
-        },
-        {
-            "name": "Listing",
-            "type": {
-                "kind": "struct",
-                "fields": [
-                    {
-                        "name": "market",
+                        "name": "splVault",
                         "type": "publicKey"
                     },
                     {
-                        "name": "seller",
+                        "name": "ptokenVault",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "ptokenMint",
                         "type": "publicKey"
                     },
                     {
@@ -390,12 +591,28 @@
                         "type": "publicKey"
                     },
                     {
-                        "name": "ask",
+                        "name": "swapFee",
                         "type": "u64"
                     },
                     {
-                        "name": "lock",
+                        "name": "closed",
                         "type": "bool"
+                    },
+                    {
+                        "name": "splSupply",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "ptokenSupply",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "outstandingPtokens",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "rng",
+                        "type": "u64"
                     }
                 ]
             }
@@ -409,21 +626,46 @@
         },
         {
             "code": 6001,
+            "name": "PoolClosed",
+            "msg": "Prob pool is closed"
+        },
+        {
+            "code": 6002,
             "name": "InvalidAskAuth",
             "msg": "Only seller can change ask"
         },
         {
-            "code": 6002,
+            "code": 6003,
             "name": "LockedListing",
             "msg": "Locked listing"
         },
         {
-            "code": 6003,
+            "code": 6004,
             "name": "ZeroAsk",
             "msg": "Ask cannot be less than zero"
+        },
+        {
+            "code": 6005,
+            "name": "BurnLimit",
+            "msg": "Maximum burn amount is 9"
+        },
+        {
+            "code": 6006,
+            "name": "OutstandingProb",
+            "msg": "Outstanding ptokens, cannot close pool"
+        },
+        {
+            "code": 6007,
+            "name": "ActivePool",
+            "msg": "Cannot close active pool, claim NFT before closing"
+        },
+        {
+            "code": 6008,
+            "name": "CreatorCannotClaim",
+            "msg": "Creator cannot claim, close the pool instead"
         }
     ],
     "metadata": {
-        "address": "rTxHpHTgJ6ZeWgjAX9eEpS92Ei6SxD86rh1u55H6pWv"
+        "address": "8TV3yEKHhu2RU9Ex2UHLX2dGjJtFhv2RDuuMbLLxMdLG"
     }
 }
